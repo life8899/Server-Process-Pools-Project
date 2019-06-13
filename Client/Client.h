@@ -8,12 +8,11 @@
 #include "../FileSystem/FileSystem.h"
 #include "../Logger/Logger.h"
 #include "../Utilities/Utilities.h"
-#include "../Sender/Sender.h"
-#include"../StaticBlockingQueue/StaticBlockingQueue.h"
 #include <string>
 #include <iostream>
 #include <thread>
-#include "../Receiver/Receiver.h"
+#include "../Sockets/Sockets.h"
+using namespace Sockets;
 
 class MsgClient
 {

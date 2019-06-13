@@ -1,5 +1,9 @@
 
 #include"Client.h"
+#include "../Utilities/Utilities.h"
+#include "../MessagePassingComm/Comm.h"
+#include "../MessagePassingComm/Comm.cpp"
+
 
 using Show = StaticLogger<1>;
 using namespace Utilities;

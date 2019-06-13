@@ -193,7 +193,18 @@ int main()
 	
 
 	// Parse TestRequest XML
-	
+	string filename = "TestRequest.xml";
+	string tag = "TestDriver";
+
+	bool stripTags = true;
+
+	string text = getFile(filename);
+	std::vector<string> all = getData(text, tag);
+	for (string& str : all)
+	{
+		if (stripTags) stripAllTags(str);
+		std::cout << str << '\n';
+	}
 	
 
 	// Execute tests

@@ -27,6 +27,9 @@
     <ClCompile Include="..\TestHarness\TestHarness.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ClientGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Executive.h">
@@ -44,5 +47,13 @@
     <ClInclude Include="..\TestHarness\TestHarness.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ClientGUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\..\..\..\source\repos\ericvoje\TestHarnessProject\Executive\TestRequest.xml">
+      <Filter>Source Files</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
