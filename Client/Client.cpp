@@ -3,7 +3,7 @@
 #include "../Utilities/Utilities.h"
 #include "../MessagePassingComm/Comm.h"
 #include "../MessagePassingComm/Comm.cpp"
-
+#include "Cpp11-BlockingQueue.h"
 
 using Show = StaticLogger<1>;
 using namespace Utilities;
@@ -23,12 +23,12 @@ size_t ClientCounter::clientCount = 0;
 
 
 
-void MsgClient::ClientSender()
+void Client::Sender()
 {
 	try
 	{
 		SocketConnecter si;
-		Sender send(this->addr, this->port);
+		Sender send(this->address, this->port);
 
 		HttpMessageFunc popValue;
 		while (true)
@@ -36,13 +36,13 @@ void MsgClient::ClientSender()
 			popValue = sendQueue.deQ();
 			std::string s = popValue.findValue("ToAddr");
 			std::string delimiter = ":";
-			this->addr = s.substr(0, s.find(delimiter));
+			this->address = s.substr(0, s.find(delimiter));
 			std::string d = s.substr(s.find(delimiter) + 1, s.size());
 
 			if (popValue.findValue("Command") == "CheckIn")
 			{
 				//Upload files
-				if (connectSocketStatus(this->addr, stoi(d), si))
+				if (connectSocketStatus(this->address, stoi(d), si))
 				{
 					send.uploadData(popValue, si);
 				}
@@ -50,7 +50,7 @@ void MsgClient::ClientSender()
 
 			else if (popValue.findValue("Command") == "Extract" || popValue.findValue("Command") == "GetPackageList" || popValue.findValue("Command") == "TestMessage")
 			{
-				if (connectSocketStatus(this->addr, stoi(d), si))
+				if (connectSocketStatus(this->address, stoi(d), si))
 				{
 					send.sendMsg(popValue, si);
 				}
@@ -65,7 +65,7 @@ void MsgClient::ClientSender()
 	}
 }
 
-bool MsgClient::connectSocketStatus(std::string addr, int portNo, SocketConnecter& si)
+bool Client::connectSocketStatus(std::string addr, int portNo, SocketConnecter& si)
 {
 	try
 	{
@@ -88,7 +88,7 @@ bool MsgClient::connectSocketStatus(std::string addr, int portNo, SocketConnecte
 	return true;
 }
 
-void MsgClient::HandleCommonFunction(std::string msg)
+void Client::HandleCommonFunction(std::string msg)
 {
 	std::istringstream lstream(msg);
 	std::string cmd, serverport;
@@ -106,7 +106,7 @@ void MsgClient::HandleCommonFunction(std::string msg)
 		lstream >> isDepNeeded; HttpMessageFunc httpmsg;
 		httpmsg.addAttribute(HttpMessageFunc::attribute("Command", cmd));
 		httpmsg.addAttribute(HttpMessageFunc::attribute("ToAddr", serverport));
-		httpmsg.addAttribute(HttpMessageFunc::attribute("FromAddr", this->addr + ":" + std::to_string(this->port)));
+		httpmsg.addAttribute(HttpMessageFunc::attribute("FromAddr", this->address + ":" + std::to_string(this->port)));
 		httpmsg.addAttribute(HttpMessageFunc::attribute("Author", author));
 		httpmsg.addAttribute(HttpMessageFunc::attribute("PackageName", packageName));
 		httpmsg.addAttribute(HttpMessageFunc::attribute("IsDepNeeded", isDepNeeded));
@@ -117,7 +117,7 @@ void MsgClient::HandleCommonFunction(std::string msg)
 		HttpMessageFunc httpmsg;
 		httpmsg.addAttribute(HttpMessageFunc::attribute("Command", cmd));
 		httpmsg.addAttribute(HttpMessageFunc::attribute("ToAddr", serverport));
-		httpmsg.addAttribute(HttpMessageFunc::attribute("FromAddr", this->addr + ":" + std::to_string(this->port)));
+		httpmsg.addAttribute(HttpMessageFunc::attribute("FromAddr", this->address + ":" + std::to_string(this->port)));
 		sendQueue.enQ(httpmsg);
 	}
 	else if (Utilities::StringHelper::trim(cmd) == "TestMessage")
@@ -127,13 +127,13 @@ void MsgClient::HandleCommonFunction(std::string msg)
 		HttpMessageFunc httpmsg;
 		httpmsg.addAttribute(HttpMessageFunc::attribute("Command", cmd));
 		httpmsg.addAttribute(HttpMessageFunc::attribute("ToAddr", serverport));
-		httpmsg.addAttribute(HttpMessageFunc::attribute("FromAddr", this->addr + ":" + std::to_string(this->port)));
+		httpmsg.addAttribute(HttpMessageFunc::attribute("FromAddr", this->address + ":" + std::to_string(this->port)));
 		httpmsg.addAttribute(HttpMessageFunc::attribute("Message", testMsg));
 		sendQueue.enQ(httpmsg);
 	}
 }
 
-void MsgClient::HandleCheckIn(std::string msg, std::string cmd)
+void Client::HandleCheckIn(std::string msg, std::string cmd)
 {
 	std::istringstream lstream(msg);
 	std::string fileName, serverport, typeOfComm, dependencyNames, author, packageName, closedProp;
@@ -148,7 +148,7 @@ void MsgClient::HandleCheckIn(std::string msg, std::string cmd)
 	HttpMessageFunc httpmsg;
 	httpmsg.addAttribute(HttpMessageFunc::attribute("Command", cmd));
 	httpmsg.addAttribute(HttpMessageFunc::attribute("ToAddr", serverport));
-	httpmsg.addAttribute(HttpMessageFunc::attribute("FromAddr", this->addr + ":" + std::to_string(this->port)));
+	httpmsg.addAttribute(HttpMessageFunc::attribute("FromAddr", this->address + ":" + std::to_string(this->port)));
 	httpmsg.addAttribute(HttpMessageFunc::attribute("Author", author));
 	httpmsg.addAttribute(HttpMessageFunc::attribute("PackageName", packageName));
 	httpmsg.addAttribute(HttpMessageFunc::attribute("ClosedProp", closedProp));
@@ -164,22 +164,22 @@ void MsgClient::HandleCheckIn(std::string msg, std::string cmd)
 }
 
 
-void MsgClient::StartClientSenRec()
+void Client::StartClientSenRec()
 {
-	std::thread Sender(&MsgClient::ClientSender, this);
-	std::thread Receiver(&MsgClient::ClientReceiver, this);
+	std::thread Sender(&Client::Sender, this);
+	std::thread Receiver(&Client::Receiver, this);
 	Sender.detach();
 	Receiver.detach();
 }
 
 
-void MsgClient::ClientReceiver()
+void Client::Receiver()
 {
 	try
 	{
 		SocketSystem ss;
 		SocketListener sl(port, Socket::IP6);
-		Receiver cp(port, this->addr, true, path);
+		Receiver cp(port, this->address, true, path);
 		sl.start(cp);
 		std::cin.get();
 	}

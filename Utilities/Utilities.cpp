@@ -69,6 +69,8 @@ void StringHelper::sTitle(std::string src, size_t offset, size_t width, std::ost
   out << "\n " << std::setw(offset) << "" << std::string(width + 2, underline);
 }
 
+
+
 std::vector<std::string> StringHelper::split(const std::string& src)
 {
   std::vector<std::string> accum;

@@ -11,14 +11,14 @@
 //              ervoje@syr.edu, kutsai@syr.edu,  cvbavda@syr.edu   //
 /////////////////////////////////////////////////////////////////////
 
-#include"../Receiver/Receiver.h"
+
 #include "../HttpMessage/HttpMessage.h"
 #include "../Sockets/Sockets.h"
 #include "../FileSystem/FileSystem.h"
 #include "../Cpp11-BlockingQueue/Cpp11-BlockingQueue.h"
 #include "../Logger/Logger.h"
 #include "../Utilities/Utilities.h"
-#include "../Sender/Sender.h"
+
 #include <string>
 #include <iostream>
 class Server

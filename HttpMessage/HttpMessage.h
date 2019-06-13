@@ -59,13 +59,12 @@ public:
 	std::string toIndentedBodyString() const;
 	std::string toIndentedString() const;
 
-
-	void clear();
+		void clear();
 	static void fillBuffer(byte buffer[], size_t BufSize, byte fill = '\0');
 
 	HttpMessageFunc makeMessage(std::string comm, std::string sendAddr, std::string recAddr, int contentLength, std::string body);
-private:
 
+private:
 	Attributes attributes_;
 	Terminator term_ = "\n";
 	Body body_;

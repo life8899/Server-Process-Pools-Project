@@ -10,18 +10,19 @@
 //              ervoje@syr.edu, kutsai@syr.edu, cvbavda@syr.edu                //
 /////////////////////////////////////////////////////////////////////////////////
 
-#include"../Cpp11-BlockingQueue/Cpp11-BlockingQueue.h"
+#include "../Cpp11-BlockingQueue/Cpp11-BlockingQueue.h"
+#include "../HttpMessage/HttpMessage.h"
 
 
 template <typename T, int n>
 class StaticBlockingQueue
 {
-public:
-	BlockingQueue<T>& getQueue() {
-		return queue;
-	}
-private:
-	static BlockingQueue<T> queue;
+	public:
+		BlockingQueue<T>& getQueue() {
+			return queue;
+		}
+	private:
+		static BlockingQueue<T> queue;
 };
 
 template<typename T, int n>
