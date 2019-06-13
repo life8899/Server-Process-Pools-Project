@@ -10,14 +10,16 @@
 
 #include <iostream>
 #include <thread>
-#include<stdexcept>
+#include <stdexcept>
+#include <vector>
 #include <Windows.h>
 #include "Executive.h"
 #include "TestDriver.h"
 #include "ITest.h"
 #include "..\Logger\Logger.h"
 #include "..\TestHarness\TestHarness.h"
-#include "../Message/Message.cpp"
+#include <fstream>
+
 
 using std::logic_error;
 using std::string;
@@ -74,6 +76,67 @@ bool Executor::execute(TestedCode t)
 	return funcRet;
 }
 
+void stripAllTags(string& text)
+{
+	unsigned int start = 0, pos;
+
+	while (start < text.size())
+	{
+		start = text.find("<", start);
+		if (start == string::npos) {
+			break;
+		}
+
+		pos = text.find(">", start);
+		if (pos == string::npos) {
+			break;
+		}
+		text.erase(start, pos - start + 1);
+	}
+}
+
+string getFile(string filename)
+{
+	string buffer;
+	char c;
+
+	std::ifstream in(filename);
+	if (!in) {
+		std::cout << filename << " File cannot be found";   exit(1);
+	}
+
+	while (in.get(c)) {
+		buffer += c;
+	}
+	in.close();
+
+	return buffer;
+}
+
+std::vector<string> getData(const string& text, string tags)
+{
+	std::vector<string> collection;
+	unsigned int position = 0, start;
+
+	while (true)
+	{
+		start = text.find("<" + tags, position);
+		if (start == string::npos) {
+			return collection;
+		}
+
+		start = text.find(">", start);
+		start++;
+
+		position = text.find("</" + tags, start);
+		if (position == string::npos) {
+			return collection;
+		}
+		collection.push_back(text.substr(start, position - start));
+	}
+}
+
+
 #ifdef TEST_EXECUTIVE
 
 // Private test function 1 fails
@@ -121,6 +184,7 @@ int main()
 	//ITest* testDriver = TestFactory::create();
 
 	//testDriver->addTest(t1);
+	
 	//testDriver->addTest(t2);
 	//testDriver->addTest(t3);
 	//testDriver->execute();
