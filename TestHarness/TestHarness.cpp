@@ -108,6 +108,24 @@ Harness::Harness()
 	_testDriver = TestFactory::create();
 }
 
+void Harness::run()
+{
+
+}
+
+std::string Harness::message()
+{
+	if (testsRead == 0)
+	{
+		return "No tests were found.";
+	}
+	else 
+	{
+		return "None of the " + std::to_string(testsRead) + " tests were ran.";
+	}
+	
+}
+
 // Create new TestHarness object
 Harness::~Harness()
 {

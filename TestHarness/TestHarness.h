@@ -42,11 +42,19 @@ namespace TestHarness
 		void parseTestXML(std::string path);
 		void addTest(Executive::TestedCode t);
 
+		void run();
+		std::string message();
+
 		// Constructors
 		Harness();
 		~Harness();
 
 	private:
+		
+		int testsRead = 0;
+		int testsRan = 0;
+		
+		
 		Logging::Logger& _log = Logging::StaticLogger<1>::instance();
 		Executive::ITest* _testDriver;
 	};
